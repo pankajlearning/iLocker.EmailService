@@ -6,6 +6,7 @@ using EmailAccount = iLocker.EmailService.DomainModels.EmailAccount;
 using Entities = iLocker.EmailService.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
+using iLocker.EmailService.Data.Entities;
 
 namespace iLocker.EmailService.Services;
 
@@ -39,7 +40,7 @@ public class EmailAccountService : IEmailAccountService
     /// </summary>
     /// <param name="emailAccount">Email account</param>
     /// <returns>A task that represents the asynchronous operation</returns>
-    public virtual async Task AddEmailAccountAsync(EmailAccount emailAccount)
+    public virtual async Task<EmailAccount> AddEmailAccountAsync(EmailAccount emailAccount)
     {
         if (emailAccount == null)
             throw new ArgumentNullException(nameof(emailAccount));
@@ -71,6 +72,7 @@ public class EmailAccountService : IEmailAccountService
 
         await _emailServiceDataContext.EmailAccounts.AddAsync(emailAccountEntity);
         await _emailServiceDataContext.SaveChangesAsync();
+        return await GetEmailAccountAsync(emailAccountEntity.Id);
     }
 
     /// <summary>
@@ -141,7 +143,8 @@ public class EmailAccountService : IEmailAccountService
     /// </returns>
     public virtual async Task<EmailAccount> GetEmailAccountAsync(long emailAccountId)
     {
-        return await _emailServiceDataContext.EmailAccounts.SingleOrDefaultAsync(a => a.Id == emailAccountId);
+        var emailAccountEntity = await _emailServiceDataContext.EmailAccounts.SingleOrDefaultAsync(a => a.Id == emailAccountId);
+        return _mapper.Map<EmailAccount>(emailAccountEntity);
     }
 
     /// <summary>
@@ -153,14 +156,8 @@ public class EmailAccountService : IEmailAccountService
     /// </returns>
     public virtual async Task<IList<EmailAccount>> GetEmailAccountsAsync()
     {
-        var emailAccounts = await _emailAccountRepository.GetAllAsync(query =>
-        {
-            return from ea in query
-                   orderby ea.Id
-                   select ea;
-        }, cache => default);
-
-        //return emailAccounts;
+        var emailAccounts = await _emailServiceDataContext.EmailAccounts.ToListAsync();
+        return _mapper.Map<List<EmailAccount>>(emailAccounts);
     }
 
     /// <summary>
@@ -170,9 +167,33 @@ public class EmailAccountService : IEmailAccountService
     /// A task that represents the asynchronous operation
     /// The task result contains the email accounts list
     /// </returns>
-    public Task<EmailAccount> GetDefaultEmailAccountAsync()
+    public async Task<EmailAccount> GetDefaultEmailAccountAsync()
     {
-        throw new NotImplementedException();
+        var emailAccountEntity = await _emailServiceDataContext.EmailAccounts.FirstAsync(a => a.Default == true);
+        return _mapper.Map<EmailAccount>(emailAccountEntity);
+    }
+
+
+    /// <summary>
+    /// set default email account 
+    /// </summary>
+    /// <returns>
+    /// A task that represents the asynchronous operation
+    /// <returns>A task that represents the asynchronous operation</returns>
+    /// </returns>
+    public async Task SetDefaultEmailAccountAsync(EmailAccount emailAccount)
+    {
+        emailAccount.Default = true;
+        var existingDefaultAccount =await GetDefaultEmailAccountAsync();
+        if (existingDefaultAccount != null)
+        {
+            existingDefaultAccount.Default = false;
+            _emailServiceDataContext.EmailAccounts.Update(_mapper.Map<Entities.EmailAccount>(existingDefaultAccount));
+            await _emailServiceDataContext.SaveChangesAsync();
+        }
+        var emailAccountEntity = _mapper.Map<Entities.EmailAccount>(emailAccount);
+        _emailServiceDataContext.EmailAccounts.Update(emailAccountEntity);
+        await _emailServiceDataContext.SaveChangesAsync();
     }
 
     #endregion

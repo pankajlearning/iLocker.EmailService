@@ -1,5 +1,4 @@
-﻿using iLocker.EmailService.Models;
-using iLocker.EmailService.Services.Contracts;
+﻿using iLocker.EmailService.Services.Contracts;
 using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;

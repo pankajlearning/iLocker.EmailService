@@ -15,7 +15,7 @@ public interface IEmailAccountService
     /// </summary>
     /// <param name="emailAccount">Email account</param>
     /// <returns>A task that represents the asynchronous operation</returns>
-    Task AddEmailAccountAsync(EmailAccount emailAccount);
+    Task<EmailAccount> AddEmailAccountAsync(EmailAccount emailAccount);
 
     /// <summary>
     /// Updates an email account
@@ -58,4 +58,13 @@ public interface IEmailAccountService
     /// The task result contains the email account
     /// </returns>
     Task<EmailAccount> GetDefaultEmailAccountAsync();
+
+    /// <summary>
+    /// set default email account 
+    /// </summary>
+    /// <returns>
+    /// A task that represents the asynchronous operation
+    /// <returns>A task that represents the asynchronous operation</returns>
+    /// </returns>
+    Task SetDefaultEmailAccountAsync(EmailAccount emailAccount);
 }
