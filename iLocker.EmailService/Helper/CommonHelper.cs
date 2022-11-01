@@ -36,6 +36,14 @@ public partial class CommonHelper
     #endregion
 
     #region Methods
+    /// <summary>
+    /// Application Name
+    /// </summary>
+    /// <returns></returns>
+    public static string GetApplicationName()
+    {
+        return "iLocker.EmailService";
+    }
 
     /// <summary>
     /// Ensures the subscriber email or throw.

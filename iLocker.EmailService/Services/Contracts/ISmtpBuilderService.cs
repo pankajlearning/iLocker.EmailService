@@ -19,7 +19,7 @@ public interface ISmtpBuilderService
     /// A task that represents the asynchronous operation
     /// The task result contains the an SMTP client that can be used to send email messages
     /// </returns>
-    Task<SmtpClient> BuildAsync(EmailAccount emailAccount = null);
+    Task<SmtpClient> BuildAsync(EmailAccount? emailAccount = null);
 
     /// <summary>
     /// Verifies the remote Secure Sockets Layer (SSL) certificate used for authentication.

@@ -5,7 +5,7 @@ namespace iLocker.EmailService.Data.Entities;
 /// <summary>
 /// Represents an email account
 /// </summary>
-public partial class EmailAccount
+public class EmailAccount
 {
     /// <summary>
     /// Gets or sets the entity identifier

@@ -16,6 +16,7 @@ namespace iLocker.EmailService.Services.Internal
         public QueuedEmailProfile()
         {
             CreateMap<iLocker.EmailService.DomainModels.QueuedEmail, QueuedEmail>().ReverseMap();
+            CreateMap<IList<iLocker.EmailService.DomainModels.QueuedEmail>, IList<QueuedEmail>>().ReverseMap();
         }
     }
 }

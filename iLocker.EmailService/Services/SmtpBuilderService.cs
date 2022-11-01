@@ -31,12 +31,12 @@ public class SmtpBuilderService : ISmtpBuilderService
     /// <summary>
     /// Create a new SMTP client for a specific email account
     /// </summary>
-    /// <param name="emailAccount">Email account to use. If null, then would be used EmailAccount by default</param>
+    /// <param name="emailAccount">Email account to use. If null, default email account will be used</param>
     /// <returns>
     /// A task that represents the asynchronous operation
     /// The task result contains the an SMTP client that can be used to send email messages
     /// </returns>
-    public virtual async Task<SmtpClient> BuildAsync(EmailAccount emailAccount = null)
+    public virtual async Task<SmtpClient> BuildAsync(EmailAccount? emailAccount = null)
     {
         if (emailAccount is null)
         {

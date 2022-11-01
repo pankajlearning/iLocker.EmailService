@@ -81,7 +81,7 @@ namespace iLocker.EmailService.Controllers
         /// return NoContent result if email account is deleted <see cref="NoContentResult"/> 
         /// </returns>
         [HttpDelete("{id:long}")]
-        [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(EmailAccount), Description = "Email account deleted")]
+        [SwaggerResponse(StatusCodes.Status204NoContent, Description = "Email account deleted")]
         [SwaggerResponse(StatusCodes.Status404NotFound, Type = typeof(IDictionary<string, string>), Description = "Not found")]
         public async Task<IActionResult> DeleteEmailAccount(long id)
         {
@@ -95,12 +95,12 @@ namespace iLocker.EmailService.Controllers
         /// Update a email account
         /// </summary>
         /// <param name="id">The email account id</param>
-        /// <param name="email account">EmailAccount object</param>
+        /// <param name="email account">EmailAccount object  <see cref="EmailAccount"/></param>
         /// <returns>
         /// return NoContent result if email account is Updated <see cref="NoContentResult"/> 
         /// </returns>
         [HttpPut("{id:long}")]
-        [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(EmailAccount), Description = "Email account updated")]
+        [SwaggerResponse(StatusCodes.Status204NoContent, Description = "Email account updated")]
         [SwaggerResponse(StatusCodes.Status404NotFound, Type = typeof(IDictionary<string, string>), Description = "Not found")]
         public async Task<IActionResult> UpdateEmailAccount(long id, [FromBody] EmailAccount emailAccount)
         {
@@ -114,7 +114,7 @@ namespace iLocker.EmailService.Controllers
         /// Create new email account
         /// </summary>
         /// <param name="userId">The user identifier</param>
-        /// <param name="email account">EmailAccount object</param>
+        /// <param name="emailAccount">EmailAccount object <see cref="EmailAccount"/></param>
         /// <returns>
         /// The createAtAction result for new email account <see cref="EmailAccount"/>
         /// </returns>
@@ -135,9 +135,9 @@ namespace iLocker.EmailService.Controllers
         /// <returns>
         /// return NoContent result if email account is Updated <see cref="NoContentResult"/> 
         /// </returns>
-        [HttpPut("{id:long}")]
+        [HttpPut("MarkAsDefaultEmail/{id:long}")]
         [ActionName(nameof(MarkAsDefaultEmail))]
-        [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(EmailAccount), Description = "Default email account updated")]
+        [SwaggerResponse(StatusCodes.Status204NoContent, Description = "Default email account updated")]
         [SwaggerResponse(StatusCodes.Status404NotFound, Type = typeof(IDictionary<string, string>), Description = "Not found")]
         public async Task<IActionResult> MarkAsDefaultEmail(long id)
         {
@@ -148,99 +148,58 @@ namespace iLocker.EmailService.Controllers
         }
 
 
-        ////[HttpPost, ActionName("Edit")]
-        //public virtual async Task<IActionResult> ChangePassword(EmailAccountModel model)
-        //{
-        //    //if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageEmailAccounts))
-        //    //    return AccessDeniedView();
+        /// <summary>
+        /// Change password of email account
+        /// </summary>
+        /// <param name="model">Email account model object <see cref="EmailAccountModel"/></param>
+        /// <returns>
+        /// return NoContent result if email account is Updated <see cref="NoContentResult"/> 
+        /// </returns>
+        [HttpPut("ChangePassword")]
+        [ActionName(nameof(ChangePassword))]
+        [SwaggerResponse(StatusCodes.Status204NoContent, Description = "Password of email account updated")]
+        [SwaggerResponse(StatusCodes.Status404NotFound, Type = typeof(IDictionary<string, string>), Description = "Not found")]
+        public virtual async Task<IActionResult> ChangePassword(EmailAccountModel model)
+        {
+            var emailAccount = await _emailAccountService.GetEmailAccountAsync(model.Id);
+            if (emailAccount == null) return NotFound();
+            emailAccount.Password = model.Password;
+            await _emailAccountService.UpdateEmailAccountAsync(emailAccount);
+            return NoContent();
+        }
 
-        //    ////try to get an email account with the specified id
-        //    //var emailAccount = await _emailAccountService.GetEmailAccountByIdAsync(model.Id);
-        //    //if (emailAccount == null)
-        //    //    return RedirectToAction("List");
+        /// <summary>
+        /// Send a test email
+        /// </summary>
+        /// <param name="model">Email account model object <see cref="EmailAccountModel"/></param>
+        /// <returns>
+        /// return NoContent result if test email is sent <see cref="NoContentResult"/> 
+        /// </returns>
+        [HttpPost("SendTestEmail")]
+        [SwaggerResponse(StatusCodes.Status204NoContent, Description = "Test email sent")]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(IDictionary<string, string>), Description = "Test email not sent")]
+        public virtual async Task<IActionResult> SendTestEmail(EmailAccountModel model)
+        {
+            //try to get an email account with the specified id
+            var emailAccount = await _emailAccountService.GetEmailAccountAsync(model.Id);
+            if (emailAccount == null) return NotFound();
 
-        //    ////do not validate model
-        //    //emailAccount.Password = model.Password;
-        //    //await _emailAccountService.UpdateEmailAccountAsync(emailAccount);
-
-        //    //_notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Configuration.EmailAccounts.Fields.Password.PasswordChanged"));
-
-        //    //return RedirectToAction("Edit", new { id = emailAccount.Id });
-        //}
-
-        ////[HttpPost, ActionName("Edit")]
-        ////[FormValueRequired("sendtestemail")]
-        //public virtual async Task<IActionResult> SendTestEmail(EmailAccountModel model)
-        //{
-        //    //if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageEmailAccounts))
-        //    //    return AccessDeniedView();
-
-        //    ////try to get an email account with the specified id
-        //    //var emailAccount = await _emailAccountService.GetEmailAccountByIdAsync(model.Id);
-        //    //if (emailAccount == null)
-        //    //    return RedirectToAction("List");
-
-        //    //if (!CommonHelper.IsValidEmail(model.SendTestEmailTo))
-        //    //{
-        //    //    _notificationService.ErrorNotification(await _localizationService.GetResourceAsync("Admin.Common.WrongEmail"));
-        //    //    return View(model);
-        //    //}
-
-        //    //try
-        //    //{
-        //    //    if (string.IsNullOrWhiteSpace(model.SendTestEmailTo))
-        //    //        throw new NopException("Enter test email address");
-        //    //    var store = await _storeContext.GetCurrentStoreAsync();
-        //    //    var subject = store.Name + ". Testing email functionality.";
-        //    //    var body = "Email works fine.";
-        //    //    await _emailSender.SendEmailAsync(emailAccount, subject, body, emailAccount.Email, emailAccount.DisplayName, model.SendTestEmailTo, null);
-
-        //    //    _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Configuration.EmailAccounts.SendTestEmail.Success"));
-
-        //    //    return RedirectToAction("Edit", new { id = emailAccount.Id });
-        //    //}
-        //    //catch (Exception exc)
-        //    //{
-        //    //    _notificationService.ErrorNotification(exc.Message);
-        //    //}
-
-        //    ////prepare model
-        //    //model = await _emailAccountModelFactory.PrepareEmailAccountModelAsync(model, emailAccount, true);
-
-        //    ////if we got this far, something failed, redisplay form
-        //    //return View(model);
-        //}
-
-        //[HttpPost]
-        //public virtual async Task<IActionResult> Delete(int id)
-        //{
-        //    //if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageEmailAccounts))
-        //    //    return AccessDeniedView();
-
-        //    ////try to get an email account with the specified id
-        //    //var emailAccount = await _emailAccountService.GetEmailAccountByIdAsync(id);
-        //    //if (emailAccount == null)
-        //    //    return RedirectToAction("List");
-
-        //    //try
-        //    //{
-        //    //    await _emailAccountService.DeleteEmailAccountAsync(emailAccount);
-
-        //    //    //activity log
-        //    //    await _customerActivityService.InsertActivityAsync("DeleteEmailAccount",
-        //    //        string.Format(await _localizationService.GetResourceAsync("ActivityLog.DeleteEmailAccount"), emailAccount.Id), emailAccount);
-
-        //    //    _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Configuration.EmailAccounts.Deleted"));
-
-        //    //    return RedirectToAction("List");
-        //    //}
-        //    //catch (Exception exc)
-        //    //{
-        //    //    await _notificationService.ErrorNotificationAsync(exc);
-        //    //    return RedirectToAction("Edit", new { id = emailAccount.Id });
-        //    //}
-        //}
-
+            if (!CommonHelper.IsValidEmail(model.SendTestEmailTo))
+            {
+                return BadRequest("Wrong email");
+            }
+            try
+            {
+                var subject = CommonHelper.GetApplicationName() + " Testing email functionality.";
+                var body = "Email works fine.";
+                await _emailSenderService.SendEmailAsync(emailAccount, subject, body, emailAccount.Email, emailAccount.DisplayName, model.SendTestEmailTo,model.SendTestEmailTo);
+                return NoContent();
+            }
+            catch (Exception exc)
+            {
+               return BadRequest(exc.Message);
+            }
+        }
         //#endregion
     }
 }

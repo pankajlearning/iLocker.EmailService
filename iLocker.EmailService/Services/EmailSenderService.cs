@@ -48,10 +48,10 @@ public class EmailSenderService : IEmailSenderService
     /// <returns>A task that represents the asynchronous operation</returns>
     public virtual async Task SendEmailAsync(EmailAccount emailAccount, string subject, string body,
         string fromAddress, string fromName, string toAddress, string toName,
-        string replyTo = null, string replyToName = null,
-        IEnumerable<string> bcc = null, IEnumerable<string> cc = null,
-        string attachmentFilePath = null, string attachmentFileName = null,
-        int attachedDownloadId = 0, IDictionary<string, string> headers = null)
+        string? replyTo = null, string? replyToName = null,
+        IEnumerable<string>? bcc = null, IEnumerable<string>? cc = null,
+        string? attachmentFilePath = null, string? attachmentFileName = null,
+        int attachedDownloadId = 0, IDictionary<string, string>? headers = null)
     {
         var message = new MimeMessage();
 
