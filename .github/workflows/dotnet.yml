@@ -1,0 +1,38 @@
+name: .NET
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 6.0.x
+    - name: Restore dependencies for iLocker.EmailService
+      run: dotnet restore iLocker.EmailService/iLocker.EmailService.csproj
+    - name: Build iLocker.EmailService
+      run: dotnet build iLocker.EmailService/iLocker.EmailService.csproj -c Release --no-restore
+    - name: Publish iLocker.EmailService
+      run: dotnet publish iLocker.EmailService/iLocker.EmailService.csproj -c Release -o iLockerEmailServiceOutput
+      
+  artifactbuild:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v3
+        with: 
+          name: iLocker_Api_Artifact
+          path: iLockerEmailServiceOutput/**
+                
+               
+          retention-days: 5

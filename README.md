@@ -1,2 +1,2 @@
-# iLocker.EmailService
+# iLocker.EmailService [![.NET](https://github.com/pankajlearning/iLocker.EmailService/actions/workflows/dotnet.yml/badge.svg)](https://github.com/pankajlearning/iLocker.EmailService/actions/workflows/dotnet.yml)   [![CodeQL](https://github.com/pankajlearning/iLocker.EmailService/actions/workflows/codeql.yml/badge.svg)](https://github.com/pankajlearning/iLocker.EmailService/actions/workflows/codeql.yml)
  iLocker.EmailService
