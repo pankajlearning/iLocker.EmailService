@@ -32,7 +32,5 @@ jobs:
         uses: actions/upload-artifact@v3
         with: 
           name: iLocker_Api_Artifact
-          path: iLockerEmailServiceOutput/**
-                
-               
+          path: /iLocker.EmailService/iLockerEmailServiceOutput/**              
           retention-days: 5
